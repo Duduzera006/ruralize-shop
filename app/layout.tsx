@@ -1,15 +1,24 @@
 import "./globals.css";
+import Navbar from "./components/navbar";
+import Footer from "./components/footer";
+import { CartProvider } from "../app/context/cartContext";
 
 export const metadata = {
   title: "Ruralize Shop",
-  description: "Plataforma de compras integrada ao Ruralize Seller",
+  description: "Marketplace rural moderno",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
-      <body className="bg-gray-50 text-gray-900 antialiased">
-        {children}
+      <body className="min-h-screen flex flex-col">
+        <Navbar />
+        <CartProvider>
+          <main className="flex-1 max-w-6xl mx-auto w-full p-4">
+            {children}
+          </main>
+        </CartProvider>
+        <Footer />
       </body>
     </html>
   );
