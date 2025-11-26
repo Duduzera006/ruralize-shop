@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { AddToCartButton } from "@/app/components/addToCart";
 
 interface Produto {
   id: string;
@@ -84,12 +84,10 @@ export default async function ProdutoPage({
             : "Produto esgotado"}
         </p>
 
-        <Button
-          className="w-full bg-green-600 hover:bg-green-700"
-          disabled={produto.estoque === 0}
-        >
-          Adicionar ao carrinho
-        </Button>
+        <AddToCartButton
+          product={produto}
+          sellerId={produto.empresaId ?? empresaId}
+        />
       </div>
     </div>
   );

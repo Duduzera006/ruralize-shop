@@ -12,8 +12,9 @@ export type ProductOption = {
 export type Product = {
   id: string;
   titulo: string;
-  foto: string;
-  descricao: string;
+  foto?: string;
+  fotos?: string[];
+  descricao?: string;
   preco: number;
   categoria: string;
   estoque: number;

@@ -10,28 +10,41 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useProducts } from "@/app/context/productsContext";
 
 interface ProductCardProps {
   id: string;
   product: {
     titulo: string;
     descricao?: string;
-    fotos: string[];
+    fotos?: string[];
+    foto?: string;
     preco: number;
     estoque: number;
     categoria: string;
-    empresaId: string;
+    empresaId?: string;
   };
 }
 
 export function ProductCard({ id, product }: ProductCardProps) {
+  // prefer real-time product from Firestore if available
+  let realtime = undefined;
+  try {
+    const ctx = useProducts();
+    realtime = ctx.getById(id);
+  } catch (e) {
+    // if provider is not mounted, fall back to prop
+    realtime = undefined;
+  }
+
+  const display = realtime ?? product;
   return (
     <Card className="w-full max-w-sm overflow-hidden border rounded-xl shadow-sm hover:shadow-md transition">
-      <Link href={`/produto/${product.empresaId}/${id}`}>
+      <Link href={`/produto/${display.empresaId}/${id}`}>
         <div className="w-full h-56 relative">
           <Image
-            src={product.fotos?.[0] || "/placeholder.png"}
-            alt={product.titulo}
+            src={display.fotos?.[0] || display.foto || "/placeholder.png"}
+            alt={display.titulo}
             fill
             className="object-cover"
           />
@@ -39,30 +52,29 @@ export function ProductCard({ id, product }: ProductCardProps) {
       </Link>
 
       <CardHeader className="px-4 pt-4 pb-2">
-        <h3 className="font-semibold text-lg line-clamp-1">{product.titulo}</h3>
+        <h3 className="font-semibold text-lg line-clamp-1">{display.titulo}</h3>
         <p className="text-sm text-gray-500 line-clamp-2">
-          {product.descricao}
+          {display.descricao}
         </p>
       </CardHeader>
 
       <CardContent className="px-4 pb-2">
         <div className="flex items-center justify-between">
           <p className="text-xl font-bold text-green-700">
-            R$ {product.preco?.toFixed(2)}
+            R$ {display.preco?.toFixed(2)}
           </p>
 
           <Badge variant="outline" className="uppercase text-xs">
-            {product.categoria}
+            {display.categoria}
           </Badge>
         </div>
-
         <p
           className={`text-sm mt-2 ${
-            product.estoque > 0 ? "text-gray-600" : "text-red-600 font-medium"
+            display.estoque > 0 ? "text-gray-600" : "text-red-600 font-medium"
           }`}
         >
-          {product.estoque > 0
-            ? `Estoque: ${product.estoque}`
+          {display.estoque > 0
+            ? `Estoque: ${display.estoque}`
             : "Fora de estoque"}
         </p>
       </CardContent>
@@ -71,9 +83,9 @@ export function ProductCard({ id, product }: ProductCardProps) {
         <Button
           className="w-full bg-green-600 hover:bg-green-700"
           asChild
-          disabled={product.estoque === 0}
+          disabled={display.estoque === 0}
         >
-          <Link href={`/produto/${product.empresaId}/${id}`}>Ver detalhes</Link>
+          <Link href={`/produto/${display.empresaId}/${id}`}>Ver detalhes</Link>
         </Button>
       </CardFooter>
     </Card>
