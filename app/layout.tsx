@@ -15,6 +15,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
+      <head>
+        <link rel="icon" href="/icon-120x120.png" />
+        <link rel="apple-touch-icon" href="/icon-120x120.png" />
+      </head>
       <body className="min-h-screen flex flex-col">
         <ToastProvider>
           <AuthProvider>
