@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ruralize Shop — README
 
-## Getting Started
+Projeto: marketplace Next.js (App Router) em TypeScript focado em produtos rurais.
 
-First, run the development server:
+Este README documenta como configurar, rodar e entender rapidamente a arquitetura do projeto — ideal para avaliação da organização do repositório.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+----
+
+## Estrutura principal
+
+- `app/` — App Router (páginas, layouts e componentes do lado do servidor/cliente).
+  - `app/page.tsx` — página inicial (lista de produtos).
+  - `app/produto/[empresaId]/[id]/page.tsx` — detalhe do produto.
+  - `app/carrinho/page.tsx` — página do carrinho e checkout.
+  - `app/sobre`, `app/politica`, `app/contato` — páginas estáticas adicionadas.
+- `app/components/` — componentes reutilizáveis (cartões, botões, navbar, etc.).
+- `app/context/` — providers e hooks: `cartContext`, `authContext`, `productsContext`, `toastContext`.
+- `app/services/` — inicialização do Firebase (`firebase.ts`) e integrações.
+- `app/types/` — tipos TypeScript (ex.: `product.ts`).
+- `public/` — imagens estáticas, favicon e ícones gerados.
+- `scripts/` — utilitários (ex.: `generate-favicons.js`).
+
+----
+
+## Requisitos
+
+- Node.js 18+ recomendável
+- npm (ou pnpm/yarn)
+
+----
+
+## Variáveis de ambiente
+
+Crie um arquivo `.env.local` na raiz com ao menos:
+
+```
+NEXT_PUBLIC_API_URL=https://seu-backend.exemplo
+NEXT_PUBLIC_FIREBASE_API_KEY=...
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=...
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
+NEXT_PUBLIC_FIREBASE_APP_ID=...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+OBS: se você não usar Firebase em produção, o app faz fallback para a API REST para listar produtos.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+----
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts úteis
 
-## Learn More
+- `npm run dev` — roda em modo desenvolvimento (http://localhost:3000)
+- `npm run build` — build de produção
+- `npm start` — roda build em produção
+- `npm run lint` — executa ESLint
+- `npm run generate:favicons` — gera ícones a partir de `public/ic_default_logo3.png` (requer dependências dev `sharp` e `png-to-ico`)
 
-To learn more about Next.js, take a look at the following resources:
+----
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Fluxo principal e decisões de arquitetura
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Server/Client: usa Next.js App Router; páginas que precisam de interatividade são "use client".
+- Cart: `CartProvider` gerencia estado do carrinho em client components.
+- Produtos: provider em polling (ETag + intervalo de 10s) para manter compatibilidade com APIs REST e evitar que regras do Firestore bloqueiem a aplicação. Pode-se alternar para Firestore `onSnapshot` ou SSE/Socket conforme necessidade.
+- Autenticação: Firebase Auth (cliente) com `AuthProvider` (opcional para rotas protegidas). Signup cria usuário no Firebase e chama API externa para persistir perfil.
+- Checkout: `app/carrinho/page.tsx` constrói payloads compatíveis com DTOs do backend e faz POST para `${NEXT_PUBLIC_API_URL}/orders`.
 
-## Deploy on Vercel
+----
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Como testar rapidamente
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Instale dependências:
+
+```cmd
+npm install
+```
+
+2. Rodar em dev:
+
+```cmd
+npm run dev
+```
+
+3. Abra `http://localhost:3000` e verifique:
+- Lista de produtos, detalhes, adicionar ao carrinho.
+- Páginas estáticas: `/sobre`, `/politica`, `/contato`.
+
+4. Para validar ícones (favicon):
+
+```cmd
+npm run generate:favicons
+```
+
+----
+
+## Pontos importantes para avaliação do repositório
+
+- Organização clara de responsabilidades (`app/`, `components/`, `context/`, `services/`, `public/`, `scripts/`).
+- Convenções TS + Next.js (tipagem em `app/types`, separação server/client).
+- Scripts e utilitários úteis (gerar favicons, lint, build).
+- Documentação: este README, comentários nos componentes, e páginas estáticas.
+
+Para a avaliação, procure por:
+- clareza na arquitetura e como executar o projeto;
+- presença de scripts úteis (`generate:favicons`, `dev`, `build`);
+- separação entre lógica de UI e lógica de negócio;
+- tipagem TypeScript e uso de providers para estado global.
+
+----
+
+## Contribuição / Contato
+
+Sinta-se à vontade para abrir issues ou pull requests. Para dúvidas rápidas, use `suporte@ruralize.com` (placeholder no projeto).
+
+----
+
+## Licença
+
+Este repositório é fornecido sem licença explícita (adicione uma `LICENSE` se desejar). Comentários/alterações para avaliação podem ser feitas em branches separadas.
+
+----
+
+Se quiser que eu adicione um checklist de avaliação no README (itens que o avaliador deve conferir), eu adiciono em seguida.
