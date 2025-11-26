@@ -93,31 +93,14 @@ npm run generate:favicons
 
 ----
 
-## Pontos importantes para avaliação do repositório
+## Pontos importantes do repositório
 
 - Organização clara de responsabilidades (`app/`, `components/`, `context/`, `services/`, `public/`, `scripts/`).
 - Convenções TS + Next.js (tipagem em `app/types`, separação server/client).
 - Scripts e utilitários úteis (gerar favicons, lint, build).
 - Documentação: este README, comentários nos componentes, e páginas estáticas.
 
-Para a avaliação, procure por:
-- clareza na arquitetura e como executar o projeto;
-- presença de scripts úteis (`generate:favicons`, `dev`, `build`);
-- separação entre lógica de UI e lógica de negócio;
-- tipagem TypeScript e uso de providers para estado global.
-
-----
 
 ## Contribuição / Contato
 
 Sinta-se à vontade para abrir issues ou pull requests. Para dúvidas rápidas, use `suporte@ruralize.com` (placeholder no projeto).
-
-----
-
-## Licença
-
-Este repositório é fornecido sem licença explícita (adicione uma `LICENSE` se desejar). Comentários/alterações para avaliação podem ser feitas em branches separadas.
-
-----
-
-Se quiser que eu adicione um checklist de avaliação no README (itens que o avaliador deve conferir), eu adiciono em seguida.
