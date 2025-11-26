@@ -78,9 +78,6 @@ export default function Navbar() {
               <Link href="/">Home</Link>
               <Separator />
 
-              <Link href="/categorias">Categorias</Link>
-              <Separator />
-
               <Link href="/carrinho">Carrinho</Link>
               <Separator />
 
