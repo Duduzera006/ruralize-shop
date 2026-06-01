@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { AddToCartButton } from "@/app/components/addToCart";
+import { ProductReviews } from "@/app/components/productReviews";
+import { ProductChatActions } from "@/app/components/productChatActions";
 
 interface Produto {
   id: string;
@@ -49,46 +51,57 @@ export default async function ProdutoPage({
   }
 
   return (
-    <div className="max-w-5xl mx-auto py-12 px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div className="relative w-full h-96 rounded-xl overflow-hidden shadow">
-        <Image
-          src={produto.fotos?.[0] ?? "/placeholder.png"}
-          alt={produto.titulo}
-          fill
-          className="object-cover"
-        />
+    <div className="max-w-5xl mx-auto py-12 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <div className="relative w-full h-96 rounded-xl overflow-hidden shadow">
+          <Image
+            src={produto.fotos?.[0] ?? "/placeholder.png"}
+            alt={produto.titulo}
+            fill
+            className="object-cover"
+          />
+        </div>
+
+        <div>
+          <h1 className="text-3xl font-bold mb-2">{produto.titulo}</h1>
+
+          <Badge variant="outline" className="uppercase mb-4">
+            {produto.categoria}
+          </Badge>
+
+          <p className="text-gray-700 text-lg leading-relaxed mb-6">
+            {produto.descricao}
+          </p>
+
+          <p className="text-3xl font-bold text-green-700 mb-4">
+            R$ {produto.preco.toFixed(2)}
+          </p>
+
+          <p
+            className={`text-sm mb-6 ${
+              produto.estoque > 0 ? "text-gray-600" : "text-red-600 font-semibold"
+            }`}
+          >
+            {produto.estoque > 0
+              ? `Estoque disponível: ${produto.estoque}`
+              : "Produto esgotado"}
+          </p>
+
+          <AddToCartButton
+            product={produto}
+            sellerId={produto.empresaId ?? empresaId}
+          />
+
+          <div className="mt-4">
+            <ProductChatActions 
+              empresaId={produto.empresaId || empresaId} 
+              empresaName="Vendedor Ruralize" 
+            />
+          </div>
+        </div>
       </div>
 
-      <div>
-        <h1 className="text-3xl font-bold mb-2">{produto.titulo}</h1>
-
-        <Badge variant="outline" className="uppercase mb-4">
-          {produto.categoria}
-        </Badge>
-
-        <p className="text-gray-700 text-lg leading-relaxed mb-6">
-          {produto.descricao}
-        </p>
-
-        <p className="text-3xl font-bold text-green-700 mb-4">
-          R$ {produto.preco.toFixed(2)}
-        </p>
-
-        <p
-          className={`text-sm mb-6 ${
-            produto.estoque > 0 ? "text-gray-600" : "text-red-600 font-semibold"
-          }`}
-        >
-          {produto.estoque > 0
-            ? `Estoque disponível: ${produto.estoque}`
-            : "Produto esgotado"}
-        </p>
-
-        <AddToCartButton
-          product={produto}
-          sellerId={produto.empresaId ?? empresaId}
-        />
-      </div>
+      <ProductReviews productId={id} empresaId={produto.empresaId || empresaId} />
     </div>
   );
 }

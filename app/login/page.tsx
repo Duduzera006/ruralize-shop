@@ -39,7 +39,7 @@ export default function LoginPage() {
             password,
             displayName,
             uid,
-            cnpj: null,
+            role: "customer",
           }),
         }
       );

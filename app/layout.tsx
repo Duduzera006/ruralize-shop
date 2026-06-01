@@ -5,6 +5,8 @@ import { CartProvider } from "../app/context/cartContext";
 import { AuthProvider } from "../app/context/authContext";
 import { ToastProvider } from "../app/context/toastContext";
 import { ProductsProvider } from "../app/context/productsContext";
+import { FavoritesProvider } from "../app/context/favoritesContext";
+import { NotificationProvider } from "../app/context/notificationContext";
 import { ReactNode } from "react";
 
 export const metadata = {
@@ -22,15 +24,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="min-h-screen flex flex-col">
         <ToastProvider>
           <AuthProvider>
-            <ProductsProvider>
-              <Navbar />
-              <CartProvider>
-                <main className="flex-1 max-w-6xl mx-auto w-full p-4">
-                  {children}
-                </main>
-              </CartProvider>
-              <Footer />
-            </ProductsProvider>
+            <NotificationProvider>
+              <ProductsProvider>
+                <FavoritesProvider>
+                  <CartProvider>
+                    <Navbar />
+                    <main className="flex-1 max-w-6xl mx-auto w-full p-4">
+                      {children}
+                    </main>
+                    <Footer />
+                  </CartProvider>
+                </FavoritesProvider>
+              </ProductsProvider>
+            </NotificationProvider>
           </AuthProvider>
         </ToastProvider>
       </body>

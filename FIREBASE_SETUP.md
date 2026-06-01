@@ -46,9 +46,9 @@ NEXT_PUBLIC_API_URL=https://ruralize-api.vercel.app
 
 ### Registro (`/login` - aba de signup)
 - Usuário preenche: **Nome**, **Email** e **Senha**
-- API é chamada: `POST https://ruralize-api.vercel.app/auth/signup`
-  - Envia: `{ email, password, displayName, cnpj: null }`
-  - CNPJ é opcional para usuários web
+- Chama `https://ruralize-api.vercel.app/auth/signup`
+- Envia: `{ email, password, displayName, role: "customer" }`
+- O campo CNPJ deve ser omitido para usuários web (clientes) para evitar erros de validação.
 - Após sucesso na API, Firebase cria a conta
 - Usuário é redirecionado para a homepage
 

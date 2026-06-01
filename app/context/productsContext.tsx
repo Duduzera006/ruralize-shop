@@ -6,12 +6,14 @@ import { Product } from "@/app/types/product";
 type ProductsContextType = {
   products: Product[];
   getById: (id: string) => Product | undefined;
+  loading: boolean;
 };
 
 const ProductsContext = createContext<ProductsContextType | undefined>(undefined);
 
 export const ProductsProvider = ({ children }: { children: ReactNode }) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const etagRef = useRef<string | null>(null);
   const intervalRef = useRef<number | null>(null);
 
@@ -28,10 +30,14 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
           cache: "no-store",
         });
 
-        if (res.status === 304) return;
+        if (res.status === 304) {
+          if (mounted) setLoading(false);
+          return;
+        }
 
         if (!res.ok) {
           console.error("Failed to fetch products", res.status);
+          if (mounted) setLoading(false);
           return;
         }
 
@@ -39,18 +45,20 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
         if (!mounted) return;
 
         setProducts(Array.isArray(json) ? json : []);
+        setLoading(false);
         const newEtag = res.headers.get("ETag");
         if (newEtag) etagRef.current = newEtag;
       } catch (err) {
         console.error("Error fetching products poll:", err);
+        if (mounted) setLoading(false);
       }
     };
 
     // initial fetch
     fetchProducts();
 
-    // poll every 10s
-    intervalRef.current = window.setInterval(fetchProducts, 10000);
+    // poll every 15s (slightly longer to save resources, relying on ETag)
+    intervalRef.current = window.setInterval(fetchProducts, 15000);
 
     return () => {
       mounted = false;
@@ -61,7 +69,7 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
   const getById = (id: string) => products.find((p) => p.id === id);
 
   return (
-    <ProductsContext.Provider value={{ products, getById }}>
+    <ProductsContext.Provider value={{ products, getById, loading }}>
       {children}
     </ProductsContext.Provider>
   );

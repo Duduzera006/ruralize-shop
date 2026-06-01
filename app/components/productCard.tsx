@@ -11,6 +11,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/app/context/productsContext";
+import { useFavorites } from "@/app/context/favoritesContext";
+import { Heart, Star } from "lucide-react";
 
 interface ProductCardProps {
   id: string;
@@ -27,6 +29,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ id, product }: ProductCardProps) {
+  const { toggleFavorite, isFavorite } = useFavorites();
   // prefer real-time product from Firestore if available
   let realtime = undefined;
   try {
@@ -38,50 +41,53 @@ export function ProductCard({ id, product }: ProductCardProps) {
   }
 
   const display = realtime ?? product;
+  const favorite = isFavorite(id);
+
   return (
-    <Card className="w-full max-w-sm overflow-hidden border rounded-xl shadow-sm hover:shadow-md transition">
+    <Card className="group w-full max-w-sm overflow-hidden border rounded-xl shadow-sm hover:shadow-md transition relative">
+      <button 
+        onClick={(e) => {
+          e.preventDefault();
+          toggleFavorite(id);
+        }}
+        className="absolute top-3 right-3 z-10 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition"
+      >
+        <Heart 
+          size={18} 
+          className={favorite ? "fill-red-500 text-red-500" : "text-gray-400"} 
+        />
+      </button>
+
       <Link href={`/produto/${display.empresaId}/${id}`}>
-        <div className="w-full h-56 relative">
+        <div className="w-full h-56 relative overflow-hidden">
           <Image
             src={display.fotos?.[0] || display.foto || "/placeholder.png"}
             alt={display.titulo}
             fill
-            className="object-cover"
+            className="object-cover group-hover:scale-105 transition duration-300"
           />
         </div>
       </Link>
 
-      <CardHeader className="px-4 pt-4 pb-2">
+      <CardHeader className="px-4 pt-4 pb-1">
         <h3 className="font-semibold text-lg line-clamp-1">{display.titulo}</h3>
-        <p className="text-sm text-gray-500 line-clamp-2">
-          {display.descricao}
-        </p>
       </CardHeader>
 
       <CardContent className="px-4 pb-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1">
           <p className="text-xl font-bold text-green-700">
             R$ {display.preco?.toFixed(2)}
           </p>
 
-          <Badge variant="outline" className="uppercase text-xs">
+          <Badge variant="outline" className="w-fit uppercase text-[10px] py-0">
             {display.categoria}
           </Badge>
         </div>
-        <p
-          className={`text-sm mt-2 ${
-            display.estoque > 0 ? "text-gray-600" : "text-red-600 font-medium"
-          }`}
-        >
-          {display.estoque > 0
-            ? `Estoque: ${display.estoque}`
-            : "Fora de estoque"}
-        </p>
       </CardContent>
 
-      <CardFooter className="px-4 pb-4">
+      <CardFooter className="px-4 pb-4 pt-2">
         <Button
-          className="w-full bg-green-600 hover:bg-green-700"
+          className="w-full bg-green-600 hover:bg-green-700 text-sm h-9"
           asChild
           disabled={display.estoque === 0}
         >
