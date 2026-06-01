@@ -60,6 +60,7 @@ A documentação completa dos endpoints (Swagger) pode ser acessada em: `https:/
 ## 📦 Modelos de Dados (Entidades)
 
 - **Produto:** `id`, `titulo`, `descricao`, `preco`, `estoque`, `categoria`, `fotosUrls`.
+- **Categorias Permitidas:** `Rações e Concentrados`, `Suplementos e Vitaminas`, `Ferraduras e Ferramentas`, `Selaria e Equipamentos`, `Higiene e Cuidados`, `Medicamentos Veterinários`, `Acessórios para Estábulo`, `Outros`.
 - **Venda:** `id`, `cliente`, `valorTotal`, `data`, `status`, `metodoPagamento`, `enderecoEntrega`.
 - **Entrega:** `id`, `endereco`, `prazo`, `status`, `compradorNome`.
 

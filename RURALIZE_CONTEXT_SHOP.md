@@ -64,7 +64,10 @@ Campos utilizados no frontend:
 ## 4. Funcionalidades e Fluxos Críticos
 
 ### 4.1. Busca e Filtros
-A página inicial implementa uma **Barra de Busca** por nome e um **Filtro por Loja** (nomes reais carregados via `/auth/stores`). A listagem é paginada (10 itens por página).
+A página inicial implementa uma **Barra de Busca** por nome e filtros avançados:
+- **Filtro por Loja:** Carrega nomes reais via `/auth/stores`.
+- **Filtro por Categoria:** Sincronizado com o App Mobile. Categorias permitidas: `Rações e Concentrados`, `Suplementos e Vitaminas`, `Ferraduras e Ferramentas`, `Selaria e Equipamentos`, `Higiene e Cuidados`, `Medicamentos Veterinários`, `Acessórios para Estábulo` e `Outros`.
+A listagem é paginada (12 itens por página) para otimização de layout.
 
 ### 4.2. Sistema de Favoritos (Wishlist)
 Utiliza o `FavoritesProvider` com persistência em **LocalStorage**. Permite ao usuário salvar produtos para visualização posterior na página `/favoritos`. (Implementação de backend futura).

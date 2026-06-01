@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/app/context/productsContext";
 import { useFavorites } from "@/app/context/favoritesContext";
-import { Heart, Star } from "lucide-react";
+import { Heart } from "lucide-react";
 
 interface ProductCardProps {
   id: string;
@@ -30,13 +30,12 @@ interface ProductCardProps {
 
 export function ProductCard({ id, product }: ProductCardProps) {
   const { toggleFavorite, isFavorite } = useFavorites();
-  // prefer real-time product from Firestore if available
+  
   let realtime = undefined;
   try {
     const ctx = useProducts();
     realtime = ctx.getById(id);
   } catch (e) {
-    // if provider is not mounted, fall back to prop
     realtime = undefined;
   }
 
@@ -44,56 +43,68 @@ export function ProductCard({ id, product }: ProductCardProps) {
   const favorite = isFavorite(id);
 
   return (
-    <Card className="group w-full max-w-sm overflow-hidden border rounded-xl shadow-sm hover:shadow-md transition relative">
-      <button 
-        onClick={(e) => {
-          e.preventDefault();
-          toggleFavorite(id);
-        }}
-        className="absolute top-3 right-3 z-10 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition"
-      >
-        <Heart 
-          size={18} 
-          className={favorite ? "fill-red-500 text-red-500" : "text-gray-400"} 
-        />
-      </button>
+    <div className="group relative h-full">
+      <Card className="w-full h-full overflow-hidden border border-gray-100 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+        
+        {/* Favorite Trigger Overlay */}
+        <button 
+          onClick={(e) => {
+            e.preventDefault();
+            toggleFavorite(id);
+          }}
+          className="absolute top-3 right-3 z-20 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-all transform active:scale-90"
+        >
+          <Heart 
+            size={16} 
+            className={favorite ? "fill-red-500 text-red-500" : "text-gray-300"} 
+          />
+        </button>
 
-      <Link href={`/produto/${display.empresaId}/${id}`}>
-        <div className="w-full h-56 relative overflow-hidden">
+        {/* Image Section */}
+        <Link href={`/produto/${display.empresaId}/${id}`} className="block overflow-hidden h-52 relative bg-gray-50">
           <Image
             src={display.fotos?.[0] || display.foto || "/placeholder.png"}
             alt={display.titulo}
             fill
-            className="object-cover group-hover:scale-105 transition duration-300"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
+        </Link>
+
+        {/* Content Section */}
+        <div className="p-4 flex flex-col flex-1">
+          <CardHeader className="p-0 mb-1">
+             <div className="flex items-center gap-2 mb-1.5">
+                <Badge variant="secondary" className="bg-green-50 text-green-700 hover:bg-green-50 border-none text-[10px] font-bold uppercase tracking-wide px-2 py-0">
+                  {display.categoria}
+                </Badge>
+             </div>
+            <h3 className="text-[15px] font-bold text-gray-800 leading-snug line-clamp-2 group-hover:text-green-700 transition-colors">
+              {display.titulo}
+            </h3>
+          </CardHeader>
+
+          <CardContent className="p-0 mb-4 flex-1">
+            <div className="flex flex-col">
+              <p className="text-xl font-extrabold text-gray-900 tracking-tight">
+                R$ {display.preco?.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </p>
+              <p className={`text-[11px] font-bold mt-1 ${display.estoque > 0 ? 'text-red-600' : 'text-red-500'}`}>
+                {display.estoque > 0 ? `${display.estoque} em estoque` : "Esgotado"}
+              </p>
+            </div>
+          </CardContent>
+
+          <CardFooter className="p-0">
+            <Button
+              className="w-full bg-green-700 hover:bg-green-800 text-white font-bold text-xs h-10 rounded-xl transition-colors shadow-sm"
+              asChild
+              disabled={display.estoque === 0}
+            >
+              <Link href={`/produto/${display.empresaId}/${id}`}>Ver Detalhes</Link>
+            </Button>
+          </CardFooter>
         </div>
-      </Link>
-
-      <CardHeader className="px-4 pt-4 pb-1">
-        <h3 className="font-semibold text-lg line-clamp-1">{display.titulo}</h3>
-      </CardHeader>
-
-      <CardContent className="px-4 pb-2">
-        <div className="flex flex-col gap-1">
-          <p className="text-xl font-bold text-green-700">
-            R$ {display.preco?.toFixed(2)}
-          </p>
-
-          <Badge variant="outline" className="w-fit uppercase text-[10px] py-0">
-            {display.categoria}
-          </Badge>
-        </div>
-      </CardContent>
-
-      <CardFooter className="px-4 pb-4 pt-2">
-        <Button
-          className="w-full bg-green-600 hover:bg-green-700 text-sm h-9"
-          asChild
-          disabled={display.estoque === 0}
-        >
-          <Link href={`/produto/${display.empresaId}/${id}`}>Ver detalhes</Link>
-        </Button>
-      </CardFooter>
-    </Card>
+      </Card>
+    </div>
   );
 }
