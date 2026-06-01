@@ -57,7 +57,7 @@ export function ChatWindow({ empresaId, empresaName, onClose }: { empresaId: str
 
     try {
       // Ensure the parent chat document exists so it can be queried in the messages list
-      await setDoc(doc(db, "chats", chatId), {
+      await setDoc(doc(db!, "chats", chatId), {
         buyerId: user.uid,
         empresaId: empresaId,
         buyerName: user.displayName || user.email,
@@ -67,7 +67,7 @@ export function ChatWindow({ empresaId, empresaName, onClose }: { empresaId: str
       }, { merge: true });
 
       // Add the actual message to the subcollection
-      await addDoc(collection(db, "chats", chatId, "messages"), {
+      await addDoc(collection(db!, "chats", chatId, "messages"), {
         text: messageText,
         senderId: user.uid,
         createdAt: serverTimestamp(),
